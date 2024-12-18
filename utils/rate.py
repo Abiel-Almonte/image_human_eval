@@ -103,6 +103,11 @@ if 'iteration' in st.session_state:
         prompt= st.session_state.prompt
         challenges= st.session_state.challenges
         
+        if st.button("Evaluate another model"):
+            for key in st.session_state:
+                del st.session_state[key]
+            st.rerun()
+        
         st.markdown(
             f"""
             <div style="display: flex; justify-content">
@@ -112,7 +117,13 @@ if 'iteration' in st.session_state:
             unsafe_allow_html=True
         )
         progress = (iteration + 1) / 250
+        
+            
         st.progress(progress)
+        if st.button("Back"):
+            st.session_state.iteration= max(st.session_state.iteration -1, 0)
+            st.rerun()
+            
         st.header(f"Prompt: {prompt}", divider= 'gray')
         col1, col2, col3= st.columns(3, vertical_alignment= 'center')
         
@@ -128,6 +139,7 @@ if 'iteration' in st.session_state:
                 st.session_state.ratings[iteration][challenge]= st.radio(f"Rate the output image for {challenge}", ["Very Good", "Good", "Decent", "Okayish", "Poor", "Very Poor"], key=f"rating_{iteration}_{challenge}", index= None)
 
         ratings= st.session_state.ratings[iteration]
+                
         if st.button("Next", use_container_width= True):
             if all(ratings.values()):
                 for challenge, rating in ratings.items():
