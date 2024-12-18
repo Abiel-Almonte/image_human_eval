@@ -45,7 +45,6 @@ echo "Populating Prompts_Final_Categories_with_Image_Paths.csv ..."
 
 rm ./data/*.txt
 echo "All processing complete."
-clear
 
 if [ -z "$VIRTUAL_ENV" ]; then
     echo "No active virtual environment detected."
