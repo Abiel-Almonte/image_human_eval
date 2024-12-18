@@ -1,0 +1,5 @@
+./images/input_images/Class02-FullPortrait/Class02_Img02.jpg
+./images/input_images/Class02-FullPortrait/Class02_Img01.jpg
+./images/input_images/Class02-FullPortrait/Class02_Img04.jpg
+./images/input_images/Class02-FullPortrait/Class02_Img05.jpg
+./images/input_images/Class02-FullPortrait/Class02_Img03.jpg

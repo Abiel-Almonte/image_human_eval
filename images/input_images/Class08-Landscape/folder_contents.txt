@@ -1,0 +1,5 @@
+./images/input_images/Class08-Landscape/Class08_Img02.jpg
+./images/input_images/Class08-Landscape/Class08_Img03.jpg
+./images/input_images/Class08-Landscape/Class08_Img04.jpg
+./images/input_images/Class08-Landscape/Class08_Img01.jpg
+./images/input_images/Class08-Landscape/Class_08_Img_05.jpg

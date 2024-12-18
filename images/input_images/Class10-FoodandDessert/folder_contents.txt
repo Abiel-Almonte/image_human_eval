@@ -1,0 +1,5 @@
+./images/input_images/Class10-FoodandDessert/Class_10_Img_04.jpg
+./images/input_images/Class10-FoodandDessert/Class_10_Img_02.jpg
+./images/input_images/Class10-FoodandDessert/Class_10_Img_05.jpg
+./images/input_images/Class10-FoodandDessert/Class_10_Img_03.jpg
+./images/input_images/Class10-FoodandDessert/Class_10_Img_01.jpg
