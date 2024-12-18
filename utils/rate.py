@@ -87,10 +87,15 @@ if 'iteration' not in st.session_state:
         st.session_state.iteration= start -1
         st.session_state.ratings = {}
         st.rerun()
-    
+
 if 'iteration' in st.session_state:
     iteration= st.session_state.iteration
     
+    if st.button("Evaluate another model"):
+        for key in st.session_state:
+            del st.session_state[key]
+        st.rerun()
+        
     if iteration < 250:
         if 'current_iteration' not in st.session_state or st.session_state.current_iteration != iteration:
             st.session_state.images= get_images(iteration)
@@ -103,11 +108,6 @@ if 'iteration' in st.session_state:
         prompt= st.session_state.prompt
         challenges= st.session_state.challenges
         
-        if st.button("Evaluate another model"):
-            for key in st.session_state:
-                del st.session_state[key]
-            st.rerun()
-        
         st.markdown(
             f"""
             <div style="display: flex; justify-content">
@@ -117,7 +117,6 @@ if 'iteration' in st.session_state:
             unsafe_allow_html=True
         )
         progress = (iteration + 1) / 250
-        
             
         st.progress(progress)
         if st.button("Back"):
