@@ -61,6 +61,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
             if [[ "$user_choice" =~ ^[Yy]$ ]]; then
                 echo "Proceeding with global Python environment. Note: This may cause dependency conflicts."
             else
+                rm -r ./.venv
                 echo "Exiting. Please install python3-venv and re-run the script."
                 exit 1
             fi
