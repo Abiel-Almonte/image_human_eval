@@ -4,6 +4,23 @@ if (-not (Get-Command python3 -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
+# Check for virtual environment
+if (-not $env:VIRTUAL_ENV) {
+    Write-Host "No active virtual environment detected."
+
+    if (Test-Path ".venv") {
+        Write-Host "Found existing virtual environment in '.venv'. Activating it..."
+        . .\.venv\Scripts\activate
+    } else {
+        Write-Host "No virtual environment found. Creating one in '.venv'..."
+        python -m venv .venv
+        Write-Host "Activating the newly created virtual environment..."
+        . .\.venv\Scripts\activate
+    }
+} else {
+    Write-Host "Already inside a virtual environment: $env:VIRTUAL_ENV"
+}
+
 $output_images_src = "./images/output_images"
 
 # Process output images
@@ -56,23 +73,6 @@ python ./utils/populate_df.py
 # Clean up temporary files
 Remove-Item "./data/*.txt" -Force
 Write-Host "All processing complete."
-
-# Check for virtual environment
-if (-not $env:VIRTUAL_ENV) {
-    Write-Host "No active virtual environment detected."
-
-    if (Test-Path ".venv") {
-        Write-Host "Found existing virtual environment in '.venv'. Activating it..."
-        . .\.venv\Scripts\activate
-    } else {
-        Write-Host "No virtual environment found. Creating one in '.venv'..."
-        python -m venv .venv
-        Write-Host "Activating the newly created virtual environment..."
-        . .\.venv\Scripts\activate
-    }
-} else {
-    Write-Host "Already inside a virtual environment: $env:VIRTUAL_ENV"
-}
 
 # Install dependencies
 Write-Host "Installing dependencies..."
