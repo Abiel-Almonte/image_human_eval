@@ -42,6 +42,6 @@ rm ./data/*.txt
 echo "All processing complete."
 
 echo "Running streamlit client ..."
-    pip3 install -U -quiet pandas
+    pip3 install -U --quiet pandas
     pip3 install -U --quiet streamlit
     streamlit run ./utils/rate.py
