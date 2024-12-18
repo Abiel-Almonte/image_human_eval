@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python 3 is not installed on this system."
+    echo "Please install Python 3 before running this script."
+    exit 1
+fi
+
 output_images_src="./images/output_images"
 
 if [ -d "$output_images_src" ]; then
@@ -38,10 +44,28 @@ echo "Populating Prompts_Final_Categories_with_Image_Paths.csv ..."
     python3 ./utils/populate_df.py
 
 rm ./data/*.txt
-
 echo "All processing complete."
+clear
 
-echo "Running streamlit client ..."
-    pip3 install -U --quiet pandas
-    pip3 install -U --quiet streamlit
-    streamlit run ./utils/rate.py
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo "No active virtual environment detected."
+
+    if [ -d ".venv" ]; then
+        echo "Found existing virtual environment in '.venv'. Activating it..."
+        source .venv/bin/activate
+
+    else
+        echo "No virtual environment found. Creating one in '.venv'..."
+        python3 -m venv .venv
+        echo "Activating the newly created virtual environment..."
+        source .venv/bin/activate
+    fi
+else
+    echo "Already inside a virtual environment: $VIRTUAL_ENV"
+fi
+
+echo "Installing dependencies..."
+pip install --quiet -r requirements.txt
+
+echo "Starting the Streamlit application..."
+streamlit run ./utils/rate.py
