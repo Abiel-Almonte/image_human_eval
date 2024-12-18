@@ -52,12 +52,22 @@ if [ -z "$VIRTUAL_ENV" ]; then
     if [ -d ".venv" ]; then
         echo "Found existing virtual environment in '.venv'. Activating it..."
         source .venv/bin/activate
-
     else
         echo "No virtual environment found. Creating one in '.venv'..."
-        python3 -m venv .venv
-        echo "Activating the newly created virtual environment..."
-        source .venv/bin/activate
+        if ! python3 -m venv .venv; then
+            echo "Error: Failed to create a virtual environment. Please ensure python3-venv is installed."
+
+            read -p "Do you want to proceed with the global Python environment? (y/n): " user_choice
+            if [[ "$user_choice" =~ ^[Yy]$ ]]; then
+                echo "Proceeding with global Python environment. Note: This may cause dependency conflicts."
+            else
+                echo "Exiting. Please install python3-venv and re-run the script."
+                exit 1
+            fi
+        else
+            echo "Virtual environment created successfully. Activating it..."
+            source .venv/bin/activate
+        fi
     fi
 else
     echo "Already inside a virtual environment: $VIRTUAL_ENV"
