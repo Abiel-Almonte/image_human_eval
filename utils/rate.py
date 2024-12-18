@@ -72,7 +72,7 @@ def get_prompt(iteration):
 def get_challenges(iteration)-> list[str]:
     string_of_challenges= st.session_state.df_Prompts_Final_Categories_with_Image_Paths['Challenge Category'][iteration]
     list_of_challenges= string_of_challenges.split(',')
-    return [x.strip() for x in list_of_challenges]
+    return ["Quality", "Aesthetics"] + [x.strip() for x in list_of_challenges]
 
 def update_records(iteration, challenge, rating):
     rating_as_int= int(st.session_state.const['rating_conversion'][rating])
@@ -137,6 +137,7 @@ if 'iteration' in st.session_state:
                     f"./{st.session_state.model_being_evalutated}_ratings.csv", 
                     index=False
                 )
+                
                 st.session_state.iteration+= 1
                 st.rerun()
             else:
