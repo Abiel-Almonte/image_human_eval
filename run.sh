@@ -34,6 +34,9 @@ else
     echo "Already inside a virtual environment: $VIRTUAL_ENV"
 fi
 
+echo "Installing dependencies..."
+pip install --quiet -r requirements.txt
+
 output_images_src="./images/output_images"
 
 if [ -d "$output_images_src" ]; then
@@ -73,9 +76,6 @@ echo "Populating Prompts_Final_Categories_with_Image_Paths.csv ..."
 
 rm ./data/*.txt
 echo "All processing complete."
-
-echo "Installing dependencies..."
-pip install --quiet -r requirements.txt
 
 echo "Starting the Streamlit application..."
 streamlit run ./utils/rate.py

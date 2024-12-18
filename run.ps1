@@ -21,6 +21,10 @@ if (-not $env:VIRTUAL_ENV) {
     Write-Host "Already inside a virtual environment: $env:VIRTUAL_ENV"
 }
 
+# Install dependencies
+Write-Host "Installing dependencies..."
+pip install --quiet -r requirements.txt
+
 $output_images_src = "./images/output_images"
 
 # Process output images
@@ -73,10 +77,6 @@ python ./utils/populate_df.py
 # Clean up temporary files
 Remove-Item "./data/*.txt" -Force
 Write-Host "All processing complete."
-
-# Install dependencies
-Write-Host "Installing dependencies..."
-pip install --quiet -r requirements.txt
 
 # Start the Streamlit application
 Write-Host "Starting the Streamlit application..."
