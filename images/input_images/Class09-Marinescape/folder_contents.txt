@@ -1,5 +1,0 @@
-./images/input_images/Class09-Marinescape/Class_09_Img_01.jpg
-./images/input_images/Class09-Marinescape/Class_09_Img_04.jpg
-./images/input_images/Class09-Marinescape/Class_09_Img_02.jpg
-./images/input_images/Class09-Marinescape/Class_09_Img_05.jpg
-./images/input_images/Class09-Marinescape/Class_09_Img_03.jpg

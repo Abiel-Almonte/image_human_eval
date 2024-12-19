@@ -1,5 +1,0 @@
-./images/input_images/Class04-LandAnimals/Class04_Img05.jpg
-./images/input_images/Class04-LandAnimals/Class04_Img03.jpg
-./images/input_images/Class04-LandAnimals/Class04_Img01.jpg
-./images/input_images/Class04-LandAnimals/Class04_Img04.jpg
-./images/input_images/Class04-LandAnimals/Class04_Img02.jpg

@@ -1,5 +1,0 @@
-./images/input_images/Class03-Cityscape/Class03_Img03.jpg
-./images/input_images/Class03-Cityscape/Class03_Img04.jpg
-./images/input_images/Class03-Cityscape/Class03_Img05.jpg
-./images/input_images/Class03-Cityscape/Class03_Img01.jpg
-./images/input_images/Class03-Cityscape/Class03_Img02.jpg
