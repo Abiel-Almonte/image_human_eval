@@ -26,8 +26,16 @@ if [ -z "$VIRTUAL_ENV" ]; then
                 exit 1
             fi
         else
-            echo "Virtual environment created successfully. Activating it..."
-            source .venv/bin/activate
+	    if [ -f ".venv/bin/activate" ]; then
+        	echo "Virtual environment created successfully. Activating it..."
+		source .venv/bin/activate
+	    elif [ -f ".venv/Scripts/activate" ]; then
+        	echo "Virtual environment created successfully. Activating it..."
+		source .venv/Scripts/activate
+	    else
+		echo "Error: Could not find the virtual envrionment activation script."
+	        exit 1
+	    fi
         fi
     fi
 else
@@ -50,7 +58,6 @@ if [ -d "$output_images_src" ]; then
 
         find "$folder" -type f \( -iname "*.png" -o -iname "*.jpg" \) | sort >> "$output_file"
 
-        echo "Generated $output_file"
     done
 else
     echo "Warning: '$output_images_src' does not exist. Skipping output images."
@@ -66,7 +73,6 @@ if [ -d "$input_images_src" ]; then
 
     find "$input_images_src" -mindepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" \) | sort >> "$input_output_file"
 
-    echo "Generated $input_output_file"
 else
     echo "Warning: '$input_images_src' does not exist. Skipping input images."
 fi
