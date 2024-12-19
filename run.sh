@@ -11,7 +11,16 @@ if [ -z "$VIRTUAL_ENV" ]; then
 
     if [ -d ".venv" ]; then
         echo "Found existing virtual environment in '.venv'. Activating it..."
-        source .venv/bin/activate
+        if [ -f ".venv/Scripts/activate" ]; then
+            source .venv/Scripts/activate
+        elif [ -f ".venv/bin/activate" ]; then
+
+            source .venv/bin/activate
+        else
+            echo "Error: Could not find the virtual environment activation script."
+            exit 1
+        fi
+
     else
         echo "No virtual environment found. Creating one in '.venv'..."
         if ! python3 -m venv .venv; then
@@ -26,12 +35,12 @@ if [ -z "$VIRTUAL_ENV" ]; then
                 exit 1
             fi
         else
-	    if [ -f ".venv/bin/activate" ]; then
+	    if [ -f ".venv/Scripts/activate" ]; then
         	echo "Virtual environment created successfully. Activating it..."
-		source .venv/bin/activate
-	    elif [ -f ".venv/Scripts/activate" ]; then
+		    source .venv/Scripts/activate  
+	    elif  [ -f ".venv/bin/activate" ];  then
         	echo "Virtual environment created successfully. Activating it..."
-		source .venv/Scripts/activate
+		    source .venv/bin/activate
 	    else
 		echo "Error: Could not find the virtual envrionment activation script."
 	        exit 1
@@ -43,8 +52,17 @@ else
 fi
 
 echo "Installing dependencies..."
-pip install --quiet -r requirements.txt
-
+if pip install --quiet -r requirements.txt; then
+    echo "Dependencies installed using pip."
+else
+    echo "pip install failed, trying python -m pip..."
+    if python -m pip install --quiet -r requirements.txt; then
+        echo "Dependencies installed using python -m pip."
+    else
+        echo "Failed to install dependencies with both pip and python -m pip."
+        exit 1
+    fi
+fi
 output_images_src="./images/output_images"
 
 if [ -d "$output_images_src" ]; then
@@ -78,7 +96,18 @@ else
 fi
 
 echo "Populating Prompts_Final_Categories_with_Image_Paths.csv ..."
-    python3 ./utils/populate_df.py
+
+if python3 ./utils/populate_df.py; then
+    :
+else
+    echo "python3 failed, trying python..."
+    if python ./utils/populate_df.py; then
+        :
+    else
+        echo "Failed to populte Prompts_Final_Categories_with_Image_Paths.csv with both python3 and python"
+        exit 1
+    fi
+fi
 
 rm ./data/*.txt
 echo "All processing complete."
