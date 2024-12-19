@@ -5,6 +5,21 @@ import glob
 st.set_page_config(layout="wide")
 st.title("Image Human Evaluation")
 
+if 'const' not in st.session_state:
+    st.session_state.const= {
+        'output_max_length': None,
+        'input_max_length': None,
+        'N_PROMPTS': 5,      
+        'rating_conversion': {
+            'Very Good': 5,
+            'Good': 4,
+            'Decent': 3,
+            'Okayish': 2,
+            'Poor': 1,
+            'Very Poor': 0
+        }
+    }
+    
 if 'model_being_evalutated' not in st.session_state:
     model_options= ['Grounded-Instruct-Pix2Pix', 'ControlNet', 'Plug and Play', 'Instructpix2pix']
     model_being_evalutated= st.radio("What model are you evaluating?", model_options, index= None, horizontal= True)
@@ -18,6 +33,11 @@ if 'model_being_evalutated' not in st.session_state:
         
 if 'df_Prompts_Final_Categories_with_Image_Paths' not in st.session_state:
     st.session_state.df_Prompts_Final_Categories_with_Image_Paths= pd.read_csv("./data/Prompts_Final_Categories_with_Image_Paths.csv")
+    column_name= "output_image_path_"  + st.session_state.model_being_evalutated
+    n_nan_values= st.session_state.df_Prompts_Final_Categories_with_Image_Paths[column_name].isna().sum()
+    st.session_state.const['output_max_length']= len(st.session_state.df_Prompts_Final_Categories_with_Image_Paths)- n_nan_values
+    st.session_state.const['input_max_length']= st.session_state.const['output_max_length']// 5
+    
 
 if 'df_Rating_Template_Final' not in st.session_state:
     csv_filename= f"{st.session_state.model_being_evalutated}_ratings.csv"
@@ -30,19 +50,6 @@ if 'cache' not in st.session_state:
     st.session_state.cache= {"input_image": None, "output_image": None}
     
     
-if 'const' not in st.session_state:
-    st.session_state.const= {
-        'input_max_length': 50,
-        'N_PROMPTS': 5,      
-        'rating_conversion': {
-            'Very Good': 5,
-            'Good': 4,
-            'Decent': 3,
-            'Okayish': 2,
-            'Poor': 1,
-            'Very Poor': 0
-        }
-    }
 
 def get_input_image_name(iteration):
     if iteration >= st.session_state.const['input_max_length']:
@@ -81,7 +88,7 @@ def update_records(iteration, challenge, rating):
      
 if 'iteration' not in st.session_state: 
     
-    start= st.number_input("Enter the start iteration to resume (e.g., 0):", min_value=1, max_value=250, value=1, step= 1)
+    start= st.number_input("**You can resume the evaluation from a specific point. Enter the point where you want to start (e.g., 0 for the first item):**", min_value=1, max_value=250, value=1, step= 1)
         
     if st.button("Begin Evaluation"):
         st.session_state.iteration= start -1
@@ -96,7 +103,7 @@ if 'iteration' in st.session_state:
             del st.session_state[key]
         st.rerun()
         
-    if iteration < 250:
+    if iteration < st.session_state.const['output_max_length']:
         if 'current_iteration' not in st.session_state or st.session_state.current_iteration != iteration:
             st.session_state.images= get_images(iteration)
             st.session_state.prompt= get_prompt(iteration)
@@ -111,12 +118,12 @@ if 'iteration' in st.session_state:
         st.markdown(
             f"""
             <div style="display: flex; justify-content">
-                <h4 style="margin: 0;">Progress: <span style="color: #0a84ff;">{iteration+1}/250</span></h4>
+                <h4 style="margin: 0;">Progress: <span style="color: #0a84ff;">{iteration+1}/{st.session_state.const['output_max_length']}</span></h4>
             </div>
             """, 
             unsafe_allow_html=True
         )
-        progress = (iteration + 1) / 250
+        progress = (iteration + 1) / st.session_state.const['output_max_length']
             
         st.progress(progress)
         if st.button("Back"):
