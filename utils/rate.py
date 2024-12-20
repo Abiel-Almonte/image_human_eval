@@ -14,7 +14,7 @@ if 'const' not in st.session_state:
             'Decent': 3,
             'Okayish': 2,
             'Poor': 1,
-            'Very Poor': 0
+            'Very Poor/ No Change': 0
         }
     }
     
@@ -140,7 +140,7 @@ if 'iteration' in st.session_state:
         
         with col1:
             for challenge in challenges:
-                st.session_state.ratings[iteration][challenge]= st.radio(f"Rate the output image for {challenge}", ["Very Good", "Good", "Decent", "Okayish", "Poor", "Very Poor"], key=f"rating_{iteration}_{challenge}", index= None)
+                st.session_state.ratings[iteration][challenge]= st.radio(f"Rate the output image for {challenge}", ["Very Good", "Good", "Decent", "Okayish", "Poor", "Very Poor/ No Change"], key=f"rating_{iteration}_{challenge}", index= None)
 
         ratings= st.session_state.ratings[iteration]
                 
