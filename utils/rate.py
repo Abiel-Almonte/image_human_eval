@@ -9,7 +9,7 @@ st.title("Image Human Evaluation")
 
 if 'const' not in st.session_state:
     st.session_state.const= {
-        'max_length': None,
+        'max_index': None,
         'rating_conversion': {
             'Very Good': 5,
             'Good': 4,
@@ -38,7 +38,7 @@ if 'df_Prompts_Final_Categories_with_Image_Paths' not in st.session_state:
     
     n_nan_values= st.session_state.df_Prompts_Final_Categories_with_Image_Paths[column_name].isna().sum()
     
-    st.session_state.const['max_length']= len(st.session_state.df_Prompts_Final_Categories_with_Image_Paths)- n_nan_values
+    st.session_state.const['max_index']= len(st.session_state.df_Prompts_Final_Categories_with_Image_Paths)- n_nan_values
     
 
 if 'df_Rating_Template_Final' not in st.session_state:
@@ -52,49 +52,47 @@ if 'cache' not in st.session_state:
     st.session_state.cache= {"input_image": None, "output_image": None}
     
 
-def get_input_image_path(iteration):
-    return st.session_state.df_Prompts_Final_Categories_with_Image_Paths.iloc[iteration]['input_image_path']
+def get_input_image_path(current_index):
+    return st.session_state.df_Prompts_Final_Categories_with_Image_Paths.iloc[current_index]['input_image_path']
 
-def get_output_image_path(iteration):
-    return st.session_state.df_Prompts_Final_Categories_with_Image_Paths.iloc[iteration][f'output_image_path_{st.session_state.model_being_evalutated}']
+def get_output_image_path(current_index):
+    return st.session_state.df_Prompts_Final_Categories_with_Image_Paths.iloc[current_index][f'output_image_path_{st.session_state.model_being_evalutated}']
 
-def get_images(iteration):
-    st.session_state.cache['output_image']= get_output_image_path(iteration)
+def get_images(current_index):
+    st.session_state.cache['output_image']= get_output_image_path(current_index)
     
     if st.session_state.cache['output_image'] is None or pd.isna(st.session_state.cache['output_image']):
         
         if st.session_state.forward:
-            st.session_state.iteration+= 1
+            st.session_state.current_index+= 1
+            st.session_state.max_index+= 1
+
         else:
-            st.session_state.iteration-= 1
+            st.session_state.current_index-= 1
             
         st.rerun()    
 
-    st.session_state.cache['input_image']= get_input_image_path(iteration)
+    st.session_state.cache['input_image']= get_input_image_path(current_index)
     return st.session_state.cache
 
-def get_prompt(iteration):
-    if iteration >= len(st.session_state.df_Prompts_Final_Categories_with_Image_Paths):
-        st.warning("Adjusted iteration exceeds available prompts")
-        st.stop()
-        
-    return st.session_state.df_Prompts_Final_Categories_with_Image_Paths['Prompt'][iteration]
+def get_prompt(current_index):
+    return st.session_state.df_Prompts_Final_Categories_with_Image_Paths['Prompt'][current_index]
 
-def get_challenges(iteration)-> list[str]:
-    string_of_challenges= st.session_state.df_Prompts_Final_Categories_with_Image_Paths['Challenge Category'][iteration]
+def get_challenges(current_index)-> list[str]:
+    string_of_challenges= st.session_state.df_Prompts_Final_Categories_with_Image_Paths['Challenge Category'][current_index]
     list_of_challenges= string_of_challenges.split(',')
     return ["Quality", "Aesthetics"] + [x.strip() for x in list_of_challenges]
 
-def update_records(iteration, challenge, rating):
+def update_records(current_index, challenge, rating):
     rating_as_int= int(st.session_state.const['rating_conversion'][rating])
-    st.session_state.df_Rating_Template_Final.at[iteration, challenge]= rating_as_int
+    st.session_state.df_Rating_Template_Final.at[current_index, challenge]= rating_as_int
      
-if 'iteration' not in st.session_state: 
+if 'current_index' not in st.session_state: 
     
     start= st.number_input(
         "**You can resume the evaluation from a specific point. Enter the point where you want to start (e.g., 0 for the first item):**",
         min_value= 1,
-        max_value= st.session_state.const['max_length'],
+        max_value= st.session_state.const['max_index'],
         value= 1,
         step= 1
     )
@@ -102,38 +100,38 @@ if 'iteration' not in st.session_state:
     start-= 1
     
     if st.button("Begin Evaluation"):
-        st.session_state.iteration= start
+        st.session_state.current_index= start
         st.session_state.forward= True
         st.session_state.ratings= {}
         st.rerun()
 
-if 'iteration' in st.session_state:
-    iteration= st.session_state.iteration
+if 'current_index' in st.session_state:
+    current_index= st.session_state.current_index
     
     if st.button("Evaluate another model"):
         for key in st.session_state:
             del st.session_state[key]
         st.rerun()
         
-    if iteration < st.session_state.const['max_length']:
-        if 'current_iteration' not in st.session_state or st.session_state.current_iteration != iteration:
-            st.session_state.images= get_images(iteration)
-            st.session_state.prompt= get_prompt(iteration)
-            st.session_state.challenges= get_challenges(iteration)
-            st.session_state.current_iteration= iteration
-            st.session_state.ratings[iteration]= {x: None for x in st.session_state.challenges} 
+    if current_index < st.session_state.const['max_index']:
+        if 'current_displayed_index' not in st.session_state or st.session_state.current_displayed_index != current_index:
+            st.session_state.images= get_images(current_index)
+            st.session_state.prompt= get_prompt(current_index)
+            st.session_state.challenges= get_challenges(current_index)
+            st.session_state.current_displayed_index= current_index
+            st.session_state.ratings[current_index]= {x: None for x in st.session_state.challenges} 
         
         images= st.session_state.images
         prompt= st.session_state.prompt
         challenges= st.session_state.challenges
-                
-        st.subheader(f"Progress: {(iteration + 1)}/{st.session_state.const['max_length']}")
-        progress=min((iteration + 1) / st.session_state.const['max_length'], 1.0)
+        
+        st.subheader(f"Progress: {(current_index + 1)}/{st.session_state.const['max_index']}")
+        progress=min((current_index + 1) / st.session_state.const['max_index'], 1.0)
             
         st.progress(progress)
 
         if st.button("Back"):
-            st.session_state.iteration= max(st.session_state.iteration -1, 0)
+            st.session_state.current_index= max(st.session_state.current_index -1, 0)
             if st.session_state.forward:
                 st.session_state.forward= False
             st.rerun()
@@ -154,7 +152,7 @@ if 'iteration' in st.session_state:
         
         with col1:
             for challenge in challenges:
-                st.session_state.ratings[iteration][challenge]= st.radio(
+                st.session_state.ratings[current_index][challenge]= st.radio(
                     f"Rate the output image for {challenge}",
                     [
                         "Very Good",
@@ -164,23 +162,23 @@ if 'iteration' in st.session_state:
                         "Poor",
                         "Very Poor/ No Change"
                     ], 
-                    key=f"rating_{iteration}_{challenge}",
+                    key=f"rating_{current_index}_{challenge}",
                     index= None
                 )
 
-        ratings= st.session_state.ratings[iteration]
+        ratings= st.session_state.ratings[current_index]
                 
         if st.button("Next", use_container_width= True):
             if all(ratings.values()):
                 for challenge, rating in ratings.items():
-                    update_records(iteration, challenge, rating)
+                    update_records(current_index, challenge, rating)
                 
                 st.session_state.df_Rating_Template_Final.to_csv(
                     f"./{st.session_state.model_being_evalutated}_ratings.csv", 
                     index= False
                 )
                 
-                st.session_state.iteration+= 1
+                st.session_state.current_index+= 1
                 
                 if not st.session_state.forward:
                     st.session_state.forward= True
