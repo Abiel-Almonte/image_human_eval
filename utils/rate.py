@@ -70,6 +70,7 @@ RATING_INFO="""
         **MULTIPLE-OBJECTS:**  
         *When dealing with images containing multiple objects, how effectively are all elements handled according to the prompt?*
 """
+
 st.title("Image Human Evaluation")
 
 if 'const' not in st.session_state:
