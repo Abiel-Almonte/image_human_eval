@@ -71,7 +71,7 @@ def get_images(current_index):
             if st.session_state.const['index_buffer'] == 0:
                 st.session_state.const['max_index']+= 1
             else:
-                 st.session_state.const['index_buffer']= max(st.session_state.const['index_buffer'] - 1, 0)
+                 st.session_state.const['index_buffer']-= 1
         else:
             st.session_state.current_index-= 1
             st.session_state.const['index_buffer']+= 1
