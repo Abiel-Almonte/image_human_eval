@@ -43,6 +43,7 @@ if 'df_Prompts_Final_Categories_with_Image_Paths' not in st.session_state:
 
 if 'df_Rating_Template_Final' not in st.session_state:
     csv_filename= f"{st.session_state.model_being_evalutated}_ratings.csv"
+
     if csv_filename in glob.glob("*.csv"):
         st.session_state.df_Rating_Template_Final= pd.read_csv(csv_filename)
     else:
@@ -65,7 +66,7 @@ def get_images(current_index):
         
         if st.session_state.forward:
             st.session_state.current_index+= 1
-            st.session_state.max_index+= 1
+            st.session_state.const['max_index']+= 1
 
         else:
             st.session_state.current_index-= 1
@@ -131,9 +132,10 @@ if 'current_index' in st.session_state:
         st.progress(progress)
 
         if st.button("Back"):
-            st.session_state.current_index= max(st.session_state.current_index -1, 0)
+            st.session_state.current_index= max(st.session_state.current_index - 1, 0)
             if st.session_state.forward:
                 st.session_state.forward= False
+                
             st.rerun()
             
         st.header(f"Prompt: {prompt}", divider= 'gray')
