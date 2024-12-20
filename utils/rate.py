@@ -63,7 +63,7 @@ def get_images(iteration):
     
     if st.session_state.cache['output_image'] is None or pd.isna(st.session_state.cache['output_image']):
         
-        if st.session_state.direction == 'forward':
+        if st.session_state.forward:
             st.session_state.iteration+= 1
         else:
             st.session_state.iteration-= 1
@@ -103,8 +103,8 @@ if 'iteration' not in st.session_state:
     
     if st.button("Begin Evaluation"):
         st.session_state.iteration= start
-        st.session_state.direction= 'forward'
-        st.session_state.ratings = {}
+        st.session_state.forward= True
+        st.session_state.ratings= {}
         st.rerun()
 
 if 'iteration' in st.session_state:
@@ -131,10 +131,11 @@ if 'iteration' in st.session_state:
         progress=min((iteration + 1) / st.session_state.const['max_length'], 1.0)
             
         st.progress(progress)
+
         if st.button("Back"):
             st.session_state.iteration= max(st.session_state.iteration -1, 0)
-            if st.session_state.direction!= 'backward':
-                st.session_state.direction= 'backward'
+            if st.session_state.forward:
+                st.session_state.forward= False
             st.rerun()
             
         st.header(f"Prompt: {prompt}", divider= 'gray')
@@ -181,8 +182,8 @@ if 'iteration' in st.session_state:
                 
                 st.session_state.iteration+= 1
                 
-                if st.session_state.direction!= 'forward':
-                    st.session_state.direction= 'forward'
+                if not st.session_state.forward:
+                    st.session_state.forward= True
                     
                 st.rerun()
             else:
