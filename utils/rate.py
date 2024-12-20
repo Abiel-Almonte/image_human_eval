@@ -10,6 +10,7 @@ st.title("Image Human Evaluation")
 if 'const' not in st.session_state:
     st.session_state.const= {
         'max_index': None,
+        'index_buffer': 0,
         'rating_conversion': {
             'Very Good': 5,
             'Good': 4,
@@ -66,10 +67,14 @@ def get_images(current_index):
         
         if st.session_state.forward:
             st.session_state.current_index+= 1
-            st.session_state.const['max_index']+= 1
 
+            if st.session_state.const['index_buffer'] == 0:
+                st.session_state.const['max_index']+= 1
+            else:
+                 st.session_state.const['index_buffer']= max(st.session_state.const['index_buffer'] - 1, 0)
         else:
             st.session_state.current_index-= 1
+            st.session_state.const['index_buffer']+= 1
             
         st.rerun()    
 
