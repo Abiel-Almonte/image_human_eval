@@ -13,7 +13,7 @@ This guide provides instructions for setting up and running the project on both 
 
 2. **Clone the Repository**:
    ```bash
-   git clone <repo_url>
+   git clone https://github.com/Abiel-Almonte/image_human_eval.git
    ```
 
 3. **Navigate to the Project Directory**:
@@ -30,14 +30,14 @@ This guide provides instructions for setting up and running the project on both 
 
 ### Prerequisites
 
-- **Python 3**: Install Python 3 from the Microsoft Store.
+- **Python 3**: Install Python 3.11 from the Microsoft Store.
 - **Git Bash**: Download and install Git Bash from [https://git-scm.com/downloads](https://git-scm.com/downloads).
 
 ### Steps
 
 1. **Open Git Bash** and clone the repository:
    ```bash
-   git clone <repo_url>
+   git clone https://github.com/Abiel-Almonte/image_human_eval.git
    ```
 
 2. **Navigate to the Project Directory**:
