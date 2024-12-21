@@ -97,10 +97,18 @@ fi
 
 echo "Populating Prompts_Final_Categories_with_Image_Paths.csv ..."
 
-if python3 ./utils/populate_df.py; then
+if [ -f  "$(pwd)/.venv/Scripts/python3" ]; then
+    VENV_PYTHON="$(pwd)/.venv/Scripts/python3"
+elif [ -f "$(pwd)/.venv/Scripts/python" ]; then 
+    VENV_PYTHON="$(pwd)/.venv/Scripts/python"
+else
+    VENV_PYTHON="$(pwd)/.venv/bin/python3"
+fi
+
+if "$VENV_PYTHON" ./utils/populate_df.py; then
     :
 else
-    echo "python3 failed, trying python..."
+    echo $VENV_PYTHON "failed, trying python..."
     if python ./utils/populate_df.py; then
         :
     else
