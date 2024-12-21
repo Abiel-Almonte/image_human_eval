@@ -34,6 +34,9 @@ brew install git python bash
 
 ## Installation and Setup
 
+> [!IMPORTANT]  
+>  **Important for Windows Users**: Always run these commands through Git Bash, not Command Prompt or PowerShell.
+
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/Abiel-Almonte/image_human_eval.git
@@ -55,8 +58,8 @@ chmod +x run.sh
 
 ## Additional Notes
 
-- The script will automatically create a virtual environment
-- For Windows users: Always run the script through Git Bash
-- The script requires Bash (`#!/bin/bash`)
+- Windows users: Always run the script through Git Bash
 - macOS users: While the default shell is Zsh, the script will automatically use Bash due to the shebang line
+- The script will automatically create a virtual environment
+- The script requires Bash (`#!/bin/bash`)
 - Just ensure the file has execute permissions (`chmod +x run.sh`)
