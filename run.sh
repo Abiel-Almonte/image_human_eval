@@ -58,28 +58,28 @@ handle_venv() {
 install_dependencies() {
     echo "Installing dependencies..."
 
-    if pip install --quiet -r requirements.txt; then
+    if pip install --quiet --disable-pip-version-check -r requirements.txt > /dev/null 2> install_errors.log; then
         echo "Dependencies installed successfully."
     else
-        echo "Error: Failed to install dependencies."
+        echo "Error: Failed to install dependencies. Check install_errors.log for details."
         exit 1
     fi
 }
 
-define_process_images() {
+define_image_paths() {
     local src_dir="$1"
     local output_file="$2"
 
     find "$src_dir" -type f \( -iname "*.png" -o -iname "*.jpg" \) > "$output_file"
 }
 
-process_images() {
+process_image_paths() {
     for folder in ./images/output_images/*/; do
       foldername=$(basename "$folder")
-      define_process_images "$folder" "./data/image_name_output_${foldername}.txt"
+      define_image_paths "$folder" "./data/image_name_output_${foldername}.txt"
     done
     
-    define_process_images "./images/input_images" "./data/image_name_input.txt"
+    define_image_paths "./images/input_images" "./data/image_name_input.txt"
 }
 
 populate_csv() {
@@ -116,7 +116,7 @@ main() {
     check_python3
     handle_venv
     install_dependencies
-    process_images
+    process_image_paths
     populate_csv
     clean_up
     start_streamlit
