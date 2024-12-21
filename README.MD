@@ -1,51 +1,62 @@
 # How to Use
 
-This guide provides instructions for setting up and running the project on both Ubuntu/Debian and Windows systems.
+This guide provides instructions for setting up and running the project on Ubuntu/Debian, macOS, and Windows systems.
 
-## Ubuntu/Debian
+## Prerequisites
 
-1. **Install Python 3**:
-   Make sure Python 3 is installed on your system. You can install it with:
-   ```bash
-   sudo apt update
-   sudo apt install python3 python3-venv python3-pip
-   ```
+### Common Requirements
+- Git (for cloning the repository)
+- Python 3.11 or higher
+- Bash shell (script uses `#!/bin/bash`)
 
-2. **Clone the Repository**:
+### System-Specific Installation
+
+#### Ubuntu/Debian
+```bash
+sudo apt update
+sudo apt install git python3 python3-venv python3-pip
+```
+
+#### macOS
+First install Homebrew if you haven't already:
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Then install Git, Python, and ensure Bash is available:
+```bash
+brew install git python bash
+```
+
+#### Windows
+- Install Python 3.11 from the Microsoft Store
+- Install Git Bash from [https://git-scm.com/downloads](https://git-scm.com/downloads)
+
+## Installation and Setup
+
+1. **Clone the Repository**
    ```bash
    git clone https://github.com/Abiel-Almonte/image_human_eval.git
-   ```
-
-3. **Navigate to the Project Directory**:
-   ```bash
    cd ./image_human_eval
    ```
 
-4. **Run the Script**:
+2. **Run the Project**
    ```bash
    ./run.sh
    ```
 
-## Windows
+## Troubleshooting
 
-### Prerequisites
+### Permission Issues
+If you encounter permission issues with run.sh:
+```bash
+chmod +x run.sh
+```
 
-- **Python 3**: Install Python 3.11 from the Microsoft Store.
-- **Git Bash**: Download and install Git Bash from [https://git-scm.com/downloads](https://git-scm.com/downloads).
+## Additional Notes
 
-### Steps
-
-1. **Open Git Bash** and clone the repository:
-   ```bash
-   git clone https://github.com/Abiel-Almonte/image_human_eval.git
-   ```
-
-2. **Navigate to the Project Directory**:
-   ```bash
-   cd ./image_human_eval
-   ```
-
-3. **Run the Script**:
-   ```bash
-   ./run.sh
-   ```
+- The script will automatically create a virtual environment
+- For Windows users: Always run the script through Git Bash
+- The script requires Bash (`#!/bin/bash`)
+- macOS users: While the default shell is Zsh, the script will automatically use Bash due to the shebang line
+- Just ensure the file has execute permissions (`chmod +x run.sh`)
