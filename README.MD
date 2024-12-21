@@ -5,9 +5,9 @@ This guide provides instructions for setting up and running the project on Ubunt
 ## Prerequisites
 
 ### Common Requirements
-- Git (for cloning the repository)
 - Python 3.11 or higher
-- Bash shell (script uses `#!/bin/bash`)
+- Git
+- Bash shell
 
 ### System-Specific Installation
 
@@ -35,7 +35,7 @@ brew install git python bash
 ## Installation and Setup
 
 > [!IMPORTANT]  
->  **Important for Windows Users**: Always run these commands through Git Bash, not Command Prompt or PowerShell.
+>  **Windows Users**: Always run these commands through Git Bash, not Command Prompt or PowerShell.
 
 1. **Clone the Repository**
    ```bash
@@ -50,7 +50,6 @@ brew install git python bash
 
 ## Troubleshooting
 
-### Permission Issues
 If you encounter permission issues with run.sh:
 ```bash
 chmod +x run.sh
