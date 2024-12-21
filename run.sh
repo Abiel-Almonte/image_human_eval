@@ -1,124 +1,121 @@
 #!/bin/bash
 
-if ! command -v python3 &> /dev/null; then
-    echo "Error: Python 3 is not installed on this system."
-    echo "Please install Python 3 before running this script."
-    exit 1
-fi
+check_python3() {
+    if ! command -v python3 &> /dev/null; then
+        echo "Error: Python 3 is not installed. Please install it before running this script."
+        exit 1
+    fi
+}
 
-if [ -z "$VIRTUAL_ENV" ]; then
-    echo "No active virtual environment detected."
+handle_venv() {
+    if [ -z "$VIRTUAL_ENV" ]; then
+        echo "No active virtual environment detected."
 
-    if [ -d ".venv" ]; then
-        echo "Found existing virtual environment in '.venv'. Activating it..."
-        if [ -f ".venv/Scripts/activate" ]; then
-            source .venv/Scripts/activate
-        elif [ -f ".venv/bin/activate" ]; then
+        if [ -d ".venv" ]; then
+            echo "Activating existing virtual environment..."
 
-            source .venv/bin/activate
-        else
-            echo "Error: Could not find the virtual environment activation script."
-            exit 1
-        fi
-
-    else
-        echo "No virtual environment found. Creating one in '.venv'..."
-        if ! python3 -m venv .venv; then
-            echo "Error: Failed to create a virtual environment. Please ensure python3-venv is installed."
-
-            read -p "Do you want to proceed with the global Python environment? (y/n): " user_choice
-            if [[ "$user_choice" =~ ^[Yy]$ ]]; then
-                echo "Proceeding with global Python environment. Note: This may cause dependency conflicts."
+            if source .venv/Scripts/activate 2>/dev/null; then
+                echo "Virtual environment activated successfully."
+            elif source .venv/bin/activate 2>/dev/null; then
+                echo "Virtual environment activated successfully."
             else
-                rm -r ./.venv
-                echo "Exiting. Please install python3-venv and re-run the script."
+                echo "Error: Failed to activate virtual environment."
                 exit 1
             fi
+
         else
-	    if [ -f ".venv/Scripts/activate" ]; then
-        	echo "Virtual environment created successfully. Activating it..."
-		    source .venv/Scripts/activate  
-	    elif  [ -f ".venv/bin/activate" ];  then
-        	echo "Virtual environment created successfully. Activating it..."
-		    source .venv/bin/activate
-	    else
-		echo "Error: Could not find the virtual envrionment activation script."
-	        exit 1
-	    fi
+            echo "Creating virtual environment in '.venv'..."
+
+            if python3 -m venv .venv; then
+                echo "Virtual environment created successfully."
+
+                if source .venv/Scripts/activate 2>/dev/null; then
+                    echo "Virtual environment activated successfully."
+                elif source .venv/bin/activate 2>/dev/null; then
+                    echo "Virtual environment activated successfully."
+                else
+                    echo "Error: Failed to activate virtual environment after creation."
+                    exit 1
+                fi
+
+            else
+                echo "Error: Failed to create virtual environment. Ensure 'python3-venv' is installed."
+                read -p "Proceed with global Python environment? (y/n): " user_choice
+
+                if [[ "$user_choice" =~ ^[Yy]$ ]]; then
+                    echo "Proceeding with global Python environment."
+                else
+                    echo "Exiting."
+                    exit 1
+                fi
+            fi
         fi
-    fi
-else
-    echo "Already inside a virtual environment: $VIRTUAL_ENV"
-fi
-
-echo "Installing dependencies..."
-if pip install --quiet -r requirements.txt; then
-    echo "Dependencies installed using pip."
-else
-    echo "pip install failed, trying python -m pip..."
-    if python -m pip install --quiet -r requirements.txt; then
-        echo "Dependencies installed using python -m pip."
     else
-        echo "Failed to install dependencies with both pip and python -m pip."
+        echo "Already inside a virtual environment: $VIRTUAL_ENV"
+    fi
+}
+
+install_dependencies() {
+    echo "Installing dependencies..."
+
+    if pip install --quiet -r requirements.txt; then
+        echo "Dependencies installed successfully."
+    else
+        echo "Error: Failed to install dependencies."
         exit 1
     fi
-fi
-output_images_src="./images/output_images"
+}
 
-if [ -d "$output_images_src" ]; then
-    echo "Processing output images in '$output_images_src'..."
+define_process_images() {
+    local src_dir="$1"
+    local output_file="$2"
 
-    find "$output_images_src" -mindepth 1 -type d -print0 | while IFS= read -r -d '' folder; do
-        foldername=$(basename "$folder")
-        output_file="./data/image_name_output_${foldername}.txt"
+    find "$src_dir" -type f \( -iname "*.png" -o -iname "*.jpg" \) > "$output_file"
+}
 
-        > "$output_file"
-
-        find "$folder" -type f \( -iname "*.png" -o -iname "*.jpg" \) | sort >> "$output_file"
-
+process_images() {
+    for folder in ./images/output_images/*/; do
+      foldername=$(basename "$folder")
+      define_process_images "$folder" "./data/image_name_output_${foldername}.txt"
     done
-else
-    echo "Warning: '$output_images_src' does not exist. Skipping output images."
-fi
+    
+    define_process_images "./images/input_images" "./data/image_name_input.txt"
+}
 
-input_images_src="./images/input_images"
-input_output_file="./data/image_name_input.txt"
+populate_csv() {
+    echo "Populating Prompts_Final_Categories_with_Image_Paths.csv..."
 
-if [ -d "$input_images_src" ]; then
-    echo "Processing input images in '$input_images_src'..."
+    VENV_PYTHON=$(find $(pwd)/.venv -name python3 -o -name python | head -n 1)
 
-    > "$input_output_file"
-
-    find "$input_images_src" -mindepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" \) | sort >> "$input_output_file"
-
-else
-    echo "Warning: '$input_images_src' does not exist. Skipping input images."
-fi
-
-echo "Populating Prompts_Final_Categories_with_Image_Paths.csv ..."
-
-if [ -f  "$(pwd)/.venv/Scripts/python3" ]; then
-    VENV_PYTHON="$(pwd)/.venv/Scripts/python3"
-elif [ -f "$(pwd)/.venv/Scripts/python" ]; then 
-    VENV_PYTHON="$(pwd)/.venv/Scripts/python"
-else
-    VENV_PYTHON="$(pwd)/.venv/bin/python3"
-fi
-
-if "$VENV_PYTHON" ./utils/populate_df.py; then
-    :
-else
-    echo $VENV_PYTHON "failed, trying python..."
-    if python ./utils/populate_df.py; then
-        :
+    if "$VENV_PYTHON" ./utils/populate_df.py 2>/dev/null; then
+        echo "CSV populated successfully using python virtual environment."
+    elif python3 ./utils/populate_df.py 2>/dev/null; then
+        echo "CSV populated successfully using python global environment."
     else
-        echo "Failed to populte Prompts_Final_Categories_with_Image_Paths.csv with both python3 and python"
+        echo "Error: Failed to populate CSV."
         exit 1
     fi
-fi
+}
 
-rm ./data/*.txt
-echo "All processing complete."
+clean_up() {
+    echo "Cleaning up temporary files..."
+    rm -f ./data/*.txt
+    echo "Temporary files removed."
+}
 
-echo "Starting the Streamlit application..."
-streamlit run ./utils/rate.py
+start_streamlit() {
+    echo "Starting the Streamlit application..."
+    echo -e "\n" | streamlit run ./utils/rate.py
+}
+
+main() {
+    check_python3
+    handle_venv
+    install_dependencies
+    process_images
+    populate_csv
+    clean_up
+    start_streamlit
+}
+
+main
