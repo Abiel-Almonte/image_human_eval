@@ -85,7 +85,11 @@ process_images() {
 populate_csv() {
     echo "Populating Prompts_Final_Categories_with_Image_Paths.csv..."
 
-    VENV_PYTHON=$(find $(pwd)/.venv -name python3 -o -name python | head -n 1)
+    if [ "$OSTYPE" == "msys" ] || [ "$OSTYPE" == "win32" ]; then
+        VENV_PYTHON=$(find "$(pwd)/.venv/Scripts" -name python.exe | head -n 1)
+    else
+        VENV_PYTHON=$(find "$(pwd)/.venv/bin" -name python3 -o -name python | head -n 1)
+    fi
 
     if "$VENV_PYTHON" ./utils/populate_df.py 2>/dev/null; then
         echo "CSV populated successfully using python virtual environment."
