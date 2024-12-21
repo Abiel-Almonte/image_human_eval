@@ -23,7 +23,12 @@ if 'const' not in st.session_state:
     
 if 'model_being_evalutated' not in st.session_state:
     model_options= ['Grounded-Instruct-Pix2Pix', 'ControlNet', 'Plug and Play', 'Instructpix2pix']
-    model_being_evalutated= st.radio("What model are you evaluating?", model_options, index= None, horizontal= True)
+    model_being_evalutated= st.radio(
+        "What model are you evaluating?", 
+        options= model_options, 
+        index= None, 
+        horizontal= True
+    )
     
     if not model_being_evalutated:
         st.warning("Please select a model to proceed.")
@@ -161,15 +166,8 @@ if 'current_index' in st.session_state:
             for challenge in challenges:
                 st.session_state.ratings[current_index][challenge]= st.radio(
                     f"Rate the output image for {challenge}",
-                    [
-                        "Very Good",
-                        "Good",
-                        "Decent",
-                        "Okayish",
-                        "Poor",
-                        "Very Poor/ No Change"
-                    ], 
-                    key=f"rating_{current_index}_{challenge}",
+                    options= st.session_state.const['rating_conversion'].keys(), 
+                    key= f"rating_{current_index}_{challenge}",
                     index= None
                 )
 
