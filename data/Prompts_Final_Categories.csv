@@ -433,7 +433,7 @@ Class18_Img02_Prompt01,"Change the sky full of stars into a fantasy scene with g
 Class18_Img02_Prompt02,Change the style of the image to a cartoon,"CHANGE, STYLE TRANSFER"
 Class18_Img02_Prompt03,"Change the starry sky into swirling galaxies, and clusters of sparkling stars","CHANGE, SPECIFIC DETAIL"
 Class18_Img02_Prompt04,Change the style of the image to a van gogh painting,"CHANGE, STYLE TRANSFER"
-Class18_Img02_Prompt05,Add a strong black hole in the bottom left region of the image,"CHANGE, SPECIFIC DETAIL, SPECIFIC DETAIL"
+Class18_Img02_Prompt05,Add a strong black hole in the bottom left region of the image,"CHANGE, SPECIFIC DETAIL"
 Class18_Img03_Prompt01,Change the landscape of the moon into a fantasy scene with glowing crackers bursting and rivers of fluorescent water flowing around,"CHANGE, SPECIFIC DETAIL"
 Class18_Img03_Prompt02,Change the moon into a giant glowing crystal,"CHANGE, ENTIRE OBJECT-RELEVANT"
 Class18_Img03_Prompt03,"Create a surreal effect of lunar explosion, where the moon is breaking apart","CHANGE, SPECIFIC DETAIL"
